@@ -4,7 +4,7 @@ import logo from '@/assets/logo.svg'
 import { NewNoteCard } from '@/components/new-note-card';
 import { NoteCard } from '@/components/note-card';
 import Image from 'next/image';
-import { useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 interface Note {
   id: string,
@@ -13,18 +13,41 @@ interface Note {
 }
 
 export default function Home() {
-  const [note, setNote] = useState<Note[]>([])
+  const [search, setSearch] = useState<string>('')
+  const [note, setNote] = useState<Note[]>(() => {
 
+    const notesOnStore = localStorage.getItem('note')
+    if (notesOnStore) {
+      return JSON.parse(notesOnStore)
+    }
 
-  function onNoteCreated(content: string){
+    return []
+  })
+  function onNoteCreated(content: string) {
     const newNote = {
-      id:crypto.randomUUID(),
+      id: crypto.randomUUID(),
       date: new Date(),
       content
     }
 
-    setNote([newNote , ...note])
+    const notesArray = [newNote, ...note]
+
+    setNote(notesArray)
+    localStorage.setItem('note', JSON.stringify(notesArray))
   }
+
+  function handleSearch(event: ChangeEvent<HTMLInputElement>) {
+    const query = event.target.value
+
+    setSearch(query)
+  }
+
+
+  const filterNotes = search !== '' ?
+    note.filter((item) => item.content.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+    : note
+
+
   return (
     <main className="mx-auto max-w-6xl my-12 space-y-6">
       <Image src={logo} alt='NLW Expert' />
@@ -33,14 +56,15 @@ export default function Home() {
         <input
           placeholder='Busque em suas notas...'
           className='w-full bg-transparent text-3xl font-semibold tracking-tight outline-none placeholder:text-slate-500  '
+          onChange={handleSearch}
         />
       </form>
       <div className='h-px bg-slate-700' />
 
       <div className='grid grid-cols-3 auto-rows-[250px] gap-6'>
-        <NewNoteCard onNoteCreated={onNoteCreated}/>
+        <NewNoteCard onNoteCreated={onNoteCreated} />
 
-        {note.map(item => {
+        {filterNotes.map(item => {
           return (
             <NoteCard key={item.id} note={item} />
           )
