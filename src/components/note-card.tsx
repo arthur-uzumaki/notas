@@ -4,12 +4,14 @@ import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 interface NoteCardProps {
   note: {
+    id:string
     date: Date
     content: string
   }
+  onNoteDelete: (id:string) => void
 }
 
-export function NoteCard({ note }: NoteCardProps) {
+export function NoteCard({ note , onNoteDelete }: NoteCardProps) {
   return (
     <Dialog>
       <DialogTrigger  className='rounded-md text-left flex flex-col gap-3 bg-slate-800 p-5  overflow-hidden relative transition-all duration-300 hover:scale-105 cursor-pointer outline-none hover:ring-2 hover:ring-slate-600 focus-visible:ring-2 focus-visible:ring-lime-400  '>
@@ -26,7 +28,7 @@ export function NoteCard({ note }: NoteCardProps) {
 
         <DialogPortal>
           <DialogOverlay className="bg-black/50 " />
-          <DialogContent className=" overflow-hidden  max-w-[640px] w-full h-[60vh]
+          <DialogContent className=" overflow-hidden  inset-0 md:inset-autos max-w-[640px] w-full md:h-[60vh]
            bg-slate-700 rounded-md flex flex-col outline-none">
          
 
@@ -41,6 +43,7 @@ export function NoteCard({ note }: NoteCardProps) {
             </div>
 
             <button type="button"
+              onClick={() => onNoteDelete(note.id)}
               className="-w-full bg-slate-800 py-4 text-center outline-none text-sm
              text-slate-300 hover:bg-slate-600 transition-all font-medium group"
             >
