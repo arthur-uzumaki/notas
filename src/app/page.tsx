@@ -42,6 +42,15 @@ export default function Home() {
     setSearch(query)
   }
 
+  function onNoteDelete(id: string){
+    const notesArray = note.filter(item => item.id !== id)
+
+    setNote(notesArray)
+
+    localStorage.setItem('note', JSON.stringify(notesArray))
+
+  }
+
 
   const filterNotes = search !== '' ?
     note.filter((item) => item.content.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
@@ -49,7 +58,7 @@ export default function Home() {
 
 
   return (
-    <main className="mx-auto max-w-6xl my-12 space-y-6">
+    <main className="mx-auto max-w-6xl my-12 space-y-6 px-5">
       <Image src={logo} alt='NLW Expert' />
 
       <form className='w-full ' >
@@ -61,12 +70,12 @@ export default function Home() {
       </form>
       <div className='h-px bg-slate-700' />
 
-      <div className='grid grid-cols-3 auto-rows-[250px] gap-6'>
+      <div className='grid grid-col-1 md:grid-col-2 lg:grid-cols-3 auto-rows-[250px] gap-6'>
         <NewNoteCard onNoteCreated={onNoteCreated} />
 
         {filterNotes.map(item => {
           return (
-            <NoteCard key={item.id} note={item} />
+            <NoteCard key={item.id} note={item} onNoteDelete={onNoteDelete} />
           )
         })}
 
